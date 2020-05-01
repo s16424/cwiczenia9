@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 
@@ -236,16 +237,16 @@ namespace LinqConsoleApp
         {
             var res = Emps.Where(emp => emp.Job == "Frontend programmer" && emp.Salary > 1000)
                 .OrderByDescending(emp => emp.Ename);
-                //.Select(emp => new
-                //{
-                //    emp.Empno,
-                //    emp.Ename,
-                //    emp.Job,
-                //    emp.Salary,
-                //    emp.HireDate,
-                //    emp.Deptno,
-                //    emp.Mgr
-                //});
+            //.Select(emp => new
+            //{
+            //    emp.Empno,
+            //    emp.Ename,
+            //    emp.Job,
+            //    emp.Salary,
+            //    emp.HireDate,
+            //    emp.Deptno,
+            //    emp.Mgr
+            //});
             foreach (var x in res)
             {
                 Console.WriteLine(x);
@@ -279,12 +280,12 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad5()
         {
- 
+
             var res = Emps.Select(emp => new
             {
                 Nazwisko = emp.Ename,
                 Praca = emp.Job
-            }) ;
+            });
 
             foreach (var x in res)
             {
@@ -364,20 +365,53 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad10Button_Click()
         {
-
+            var first = Emps.Select(emp => new
+            {
+                emp.Ename,
+                emp.Job,
+                emp.HireDate
+            });
+            //var second = Emps.Select(emp => new
+            // {
+            //Brakwartosci = null, // nie wiem o co tu chodzi z tymi nullami, nie potrafie tego napisac 
+            //null,
+            //null
+            // }) ;
+            //var res = first.Union(second).ToList();
         }
 
         //Znajdź pracownika z najwyższą pensją wykorzystując metodę Aggregate()
         public void Przyklad11()
         {
-
-        }
+            var best = Emps.Select(emp => new
+            {
+                emp.Salary
+            }).First();
+            var res = Emps.Aggregate( (best, next) =>
+                                        next.Salary > best.Salary ? next : best
+                //emp => emp.ToString()
+                );
+            //foreach(var x in Emps)
+            //{
+            //    Console.WriteLine(x.Ename + " " + x.Salary);
+            //}
+            Console.WriteLine("Zarabia najelpiej " + res.Ename + " " + res.Salary);
+        } 
 
         //Z pomocą języka LINQ i metody SelectMany wykonaj złączenie
         //typu CROSS JOIN
         public void Przyklad12()
         {
+            var res = Emps.SelectMany(e => Depts, (e, d) => new
+            {
+                Name = e.Ename,
+                Town = d.Loc
+            }).ToList();
 
+            foreach(var x in res)
+            {
+                Console.WriteLine(x);
+            }
         }
     }
 }
